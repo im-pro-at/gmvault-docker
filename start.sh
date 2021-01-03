@@ -5,24 +5,24 @@ if [ "$GMVAULT_OPTIONS" != "" ]; then
 fi
 
 # Ensure there's an address to send reports to.
-GMVAULT_SEND_REPORTS_TO=${GMVAULT_SEND_REPORTS_TO:="$GMVAULT_EMAIL_ADDRESS"}
+export GMVAULT_SEND_REPORTS_TO=${GMVAULT_SEND_REPORTS_TO:="$GMVAULT_EMAIL_ADDRESS"}
 echo "Sending email reports to $GMVAULT_SEND_REPORTS_TO."
 
 # Adjust timezone.
-GMVAULT_TIMEZONE=${GMVAULT_TIMEZONE:="America/Los_Angeles"}
+export GMVAULT_TIMEZONE=${GMVAULT_TIMEZONE:="Europe/Vienna"}
 cp /usr/share/zoneinfo/${GMVAULT_TIMEZONE} /etc/localtime
 echo ${GMVAULT_TIMEZONE} > /etc/timezone
 echo "Date: `date`."
 
 # Set up Gmvault group.
-GMVAULT_GID=${GMVAULT_GID:="$GMVAULT_DEFAULT_GID"}
+export GMVAULT_GID=${GMVAULT_GID:="$GMVAULT_DEFAULT_GID"}
 if [ "$(id -g gmvault)" != "$GMVAULT_GID" ]; then
 	groupmod -o -g "$GMVAULT_GID" gmvault
 fi
 echo "Using group ID $(id -g gmvault)."
 
 # Set up Gmvault user.
-GMVAULT_UID=${GMVAULT_UID:="$GMVAULT_DEFAULT_UID"}
+export GMVAULT_UID=${GMVAULT_UID:="$GMVAULT_DEFAULT_UID"}
 if [ "$(id -u gmvault)" != "$GMVAULT_UID" ]; then
 	usermod -o -u "$GMVAULT_UID" gmvault
 fi
