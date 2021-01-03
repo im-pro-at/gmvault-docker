@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export OAUTH_TOKEN="/data/${GMVAULT_EMAIL_ADDRESS}.passwd"
+
 if [ "$GMVAULT_OPTIONS" != "" ]; then
 	echo "Gmvault will run with the following additional options: $GMVAULT_OPTIONS."
 fi
@@ -36,19 +38,34 @@ chown -R gmvault:gmvault /data
 echo "" > $CRONTAB
 echo "${GMVAULT_FULL_SYNC_SCHEDULE} /app/backup_full.sh" >> $CRONTAB
 echo "${GMVAULT_QUICK_SYNC_SCHEDULE} /app/backup_quick.sh" >> $CRONTAB
-
-# Start app.
-if [ "$GMVAULT_SYNC_ON_STARTUP" == "yes" ]; then
-	if [ -d /data/db ]; then
-		echo "Existing database directory found, running quick sync."
-		su-exec gmvault "/app/backup_quick.sh"
+if [ -f $OAUTH_TOKEN ]; then
+	echo "Using OAuth token found at $OAUTH_TOKEN."
+	# Start app.
+	if [ "$GMVAULT_SYNC_ON_STARTUP" == "yes" ]; then
+		if [ -d /data/db ]; then
+			echo "Existing database directory found, running quick sync."
+			su-exec gmvault "/app/backup_quick.sh"
+		else
+			echo "No existing database found, running full sync."
+			su-exec gmvault "/app/backup_full.sh"
+		fi
 	else
-		echo "No existing database found, running full sync."
-		su-exec gmvault "/app/backup_full.sh"
+		echo "No sync on startup, see GMVAULT_SYNC_ON_STARTUP if you would like to change this."
 	fi
-else
-	echo "No sync on startup, see GMVAULT_SYNC_ON_STARTUP if you would like to change this."
+	
+	crond -f
 fi
 
-crond -f
+echo "#############################"
+echo "#   OAUTH SETUP REQUIRED!   #"
+echo "#############################"
+echo ""
+echo "No Gmail Passwort token found at $OAUTH_TOKEN."
+echo "Please set it up with the following instructions:"
+echo "  1/ Attach a terminal to your container."
+echo "  2/ Run this command:"
+echo "     su -c 'gmvault sync -d /data $GMVAULT_EMAIL_ADDRESS -p --store-passwd' gmvault"
+echo "  3/ Go to google app passwort and create one indicated, and copy the token back."
+echo "  4/ Once the synchronization process starts, restart the container."
 
+/bin/bash
