@@ -9,6 +9,14 @@ Code Status
 [![Docker Pulls](https://img.shields.io/docker/pulls/aubertg/gmvault-docker.svg)](https://hub.docker.com/r/aubertg/gmvault-docker/)
 
 
+Auth2 not working anymore
+
+to save direcht acess pawwort run: 
+su -c 'gmvault sync -d /data $GMVAULT_EMAIL_ADDRESS -p --store-passwd' gmvault
+
+you can use an app passwort for that!
+
+
 Overview
 --------
 
