@@ -17,12 +17,12 @@ RUN apk add --update \
 		bash \
 		ca-certificates \
 		mailx \
-		py-pip \
-		python \
+		python2 \
 		ssmtp \
 		shadow \
 		su-exec \
 		tzdata \
+	&& python -m ensurepip
 	&& pip install --upgrade pip \
 	&& pip install gmvault \
 	&& rm -rf /var/cache/apk/* \
