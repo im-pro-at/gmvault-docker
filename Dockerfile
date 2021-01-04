@@ -22,7 +22,7 @@ RUN apk add --update \
 		shadow \
 		su-exec \
 		tzdata \
-	&& python -m ensurepip
+	&& python -m ensurepip \
 	&& pip install --upgrade pip \
 	&& pip install gmvault \
 	&& rm -rf /var/cache/apk/* \
